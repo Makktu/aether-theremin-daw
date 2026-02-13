@@ -418,6 +418,7 @@
         <div class="tab" onclick="switchInterface('keys')">
           Synthesizer Keys
         </div>
+        <div class="tab" onclick="switchInterface('midi')">MIDI Player</div>
       </div>
 
       <div class="play-area" id="play-area">
@@ -436,11 +437,17 @@
         <div id="keyboard-pad">
           <div class="keys-container" id="keys-container"></div>
         </div>
+
+        <div id="midi-pad" style="display: none; padding: 20px">
+          <input type="file" id="midi-file" accept=".mid" />
+          <button class="btn" id="play-midi" disabled>Play MIDI</button>
+          <button class="btn" id="stop-midi" disabled>Stop MIDI</button>
+        </div>
       </div>
 
       <div class="status-bar" id="status-bar">Audio Engine: Standby</div>
     </div>
-
+    <script src="midi.js"></script>
     <script>
       // --- Audio System Variables ---
       let ctx, osc, gainNode, masterGain, delayNode, feedbackNode;
@@ -603,6 +610,16 @@
         pad.addEventListener('mouseup', stopPad);
         pad.addEventListener('mouseleave', stopPad);
 
+        document
+          .getElementById('midi-file')
+          .addEventListener('change', handleMidiFile);
+        document
+          .getElementById('play-midi')
+          .addEventListener('click', playMidi);
+        document
+          .getElementById('stop-midi')
+          .addEventListener('click', stopMidi);
+
         // Touch support
         pad.addEventListener('touchstart', startPad, { passive: false });
         pad.addEventListener(
@@ -613,6 +630,60 @@
           { passive: false },
         );
         pad.addEventListener('touchend', stopPad);
+      }
+
+      // --- MIDI Playback ---
+      let midiPlayer;
+      let midiFile;
+
+      function handleMidiFile(event) {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            midiFile = e.target.result;
+            document.getElementById('play-midi').disabled = false;
+          };
+          reader.readAsArrayBuffer(file);
+        }
+      }
+
+      function playMidi() {
+        if (!midiFile) {
+          alert('Please select a MIDI file first.');
+          return;
+        }
+
+        midiPlayer = new MidiPlayer.Player(function (event) {
+          if (event.name === 'Note on' && event.velocity > 0) {
+            const freq = midiToFreq(event.noteNumber);
+            triggerNoteOn(freq);
+          } else if (event.name === 'Note off' || (event.name === 'Note on' && event.velocity === 0)) {
+            triggerNoteOff();
+          } else if (event.name === 'endOfFile') {
+            stopMidi();
+          }
+        });
+
+        midiPlayer.loadArrayBuffer(midiFile);
+        midiPlayer.play();
+        document.getElementById('status-bar').innerText = 'Playing MIDI...';
+        document.getElementById('play-midi').disabled = true;
+        document.getElementById('stop-midi').disabled = false;
+      }
+
+      function stopMidi() {
+        if (midiPlayer) {
+          midiPlayer.stop();
+        }
+        triggerNoteOff();
+        document.getElementById('status-bar').innerText = 'MIDI Playback Stopped';
+        document.getElementById('play-midi').disabled = false;
+        document.getElementById('stop-midi').disabled = true;
+      }
+
+      function midiToFreq(midiNote) {
+        return Math.pow(2, (midiNote - 69) / 12) * 440;
       }
 
       // --- Keyboard Generation ---
@@ -667,12 +738,16 @@
           .forEach((t) => t.classList.remove('active'));
         event.target.classList.add('active');
 
+        document.getElementById('xy-pad').style.display = 'none';
+        document.getElementById('keyboard-pad').style.display = 'none';
+        document.getElementById('midi-pad').style.display = 'none';
+
         if (type === 'xy') {
           document.getElementById('xy-pad').style.display = 'block';
-          document.getElementById('keyboard-pad').style.display = 'none';
-        } else {
-          document.getElementById('xy-pad').style.display = 'none';
+        } else if (type === 'keys') {
           document.getElementById('keyboard-pad').style.display = 'flex';
+        } else if (type === 'midi') {
+          document.getElementById('midi-pad').style.display = 'block';
         }
         triggerNoteOff();
       }

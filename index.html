@@ -1,0 +1,840 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AETHER | Theremin DAW</title>
+    <style>
+      :root {
+        --bg-color: #0f0f13;
+        --panel-bg: #1a1a24;
+        --accent-cyan: #00e5ff;
+        --accent-purple: #b388ff;
+        --text-main: #e0e0e0;
+        --text-muted: #888899;
+        --border-radius: 12px;
+      }
+
+      * {
+        box-sizing: border-box;
+        user-select: none;
+        font-family: 'Segoe UI', system-ui, sans-serif;
+      }
+
+      body {
+        margin: 0;
+        padding: 20px;
+        background: var(--bg-color);
+        background-image: radial-gradient(
+          circle at 50% 0%,
+          #1e1e2d 0%,
+          var(--bg-color) 70%
+        );
+        color: var(--text-main);
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        overflow: hidden;
+      }
+
+      /* Power Overlay for Browser Autoplay Policy */
+      #power-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 15, 19, 0.95);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+
+      .btn-power {
+        background: transparent;
+        border: 2px solid var(--accent-cyan);
+        color: var(--accent-cyan);
+        padding: 15px 40px;
+        font-size: 24px;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+      }
+
+      .btn-power:hover {
+        background: var(--accent-cyan);
+        color: #000;
+        box-shadow: 0 0 30px rgba(0, 229, 255, 0.6);
+      }
+
+      /* Main App Layout */
+      .app-container {
+        width: 100%;
+        max-width: 1000px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        height: 100%;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 15px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 300;
+        letter-spacing: 4px;
+        color: var(--text-main);
+      }
+
+      h1 span {
+        color: var(--accent-purple);
+        font-weight: 600;
+      }
+
+      /* Transport & Settings */
+      .toolbar {
+        display: flex;
+        gap: 20px;
+        background: var(--panel-bg);
+        padding: 15px 25px;
+        border-radius: var(--border-radius);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        flex-wrap: wrap;
+      }
+
+      .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        flex: 1;
+        min-width: 120px;
+      }
+
+      .control-group label {
+        font-size: 11px;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        letter-spacing: 1px;
+      }
+
+      select,
+      input[type='range'] {
+        background: #2a2a35;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+        padding: 8px;
+        border-radius: 6px;
+        outline: none;
+        width: 100%;
+      }
+
+      input[type='range'] {
+        -webkit-appearance: none;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        padding: 0;
+      }
+
+      input[type='range']::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        background: var(--accent-cyan);
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+      }
+
+      /* DAW Recording Buttons */
+      .transport-controls {
+        display: flex;
+        align-items: flex-end;
+        gap: 10px;
+      }
+
+      .btn {
+        background: #2a2a35;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .btn:hover {
+        background: #3a3a45;
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .btn-record.recording {
+        background: #ff3366;
+        animation: pulse 1.5s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.4);
+        }
+        70% {
+          box-shadow: 0 0 0 10px rgba(255, 51, 102, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(255, 51, 102, 0);
+        }
+      }
+
+      /* Interface Tabs */
+      .tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: -10px;
+      }
+
+      .tab {
+        padding: 10px 20px;
+        background: var(--panel-bg);
+        color: var(--text-muted);
+        border-radius: 8px 8px 0 0;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+      }
+
+      .tab.active {
+        color: var(--accent-purple);
+        border-bottom: 2px solid var(--accent-purple);
+        background: #21212e;
+      }
+
+      /* Play Area */
+      .play-area {
+        flex-grow: 1;
+        background: var(--panel-bg);
+        border-radius: 0 var(--border-radius) var(--border-radius)
+          var(--border-radius);
+        position: relative;
+        box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+        overflow: hidden;
+      }
+
+      /* XY Pad Mode */
+      #xy-pad {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background:
+          linear-gradient(rgba(0, 229, 255, 0.05) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 229, 255, 0.05) 1px, transparent 1px);
+        background-size: 40px 40px;
+        cursor: crosshair;
+      }
+
+      #xy-indicator {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        background: radial-gradient(
+          circle,
+          var(--accent-cyan) 0%,
+          transparent 70%
+        );
+        border: 2px solid var(--accent-cyan);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+        opacity: 0;
+        box-shadow: 0 0 20px var(--accent-cyan);
+        transition: opacity 0.2s;
+      }
+
+      .xy-labels {
+        position: absolute;
+        color: rgba(255, 255, 255, 0.2);
+        font-size: 12px;
+        pointer-events: none;
+      }
+
+      /* Keyboard Mode */
+      #keyboard-pad {
+        display: none;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: #111;
+      }
+
+      .keys-container {
+        display: flex;
+        height: 60%;
+        position: relative;
+      }
+
+      .key {
+        border: 1px solid #000;
+        border-radius: 0 0 6px 6px;
+        cursor: pointer;
+        position: relative;
+        transition: background 0.1s;
+      }
+
+      .key.white {
+        width: 60px;
+        background: #f0f0f0;
+        z-index: 1;
+        box-shadow: inset 0 -10px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      .key.black {
+        width: 40px;
+        height: 60%;
+        background: #1a1a1a;
+        margin-left: -20px;
+        margin-right: -20px;
+        z-index: 2;
+        box-shadow: inset 0 -5px 5px rgba(255, 255, 255, 0.1);
+      }
+
+      .key.active {
+        background: var(--accent-purple) !important;
+      }
+
+      .status-bar {
+        text-align: right;
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="power-overlay">
+      <h2 style="margin-bottom: 20px; font-weight: 300">Welcome to AETHER</h2>
+      <p style="color: var(--text-muted); margin-bottom: 40px">
+        Click below to initialize the Web Audio API
+      </p>
+      <button class="btn-power" onclick="powerOn()">Power On</button>
+    </div>
+
+    <div class="app-container">
+      <header>
+        <h1>AETHER <span>Theremin</span></h1>
+        <div
+          id="timer"
+          style="
+            font-family: monospace;
+            font-size: 18px;
+            color: var(--text-muted);
+          "
+        >
+          00:00:00
+        </div>
+      </header>
+
+      <div class="toolbar">
+        <div class="control-group">
+          <label>Waveform</label>
+          <select id="waveform">
+            <option value="sine">Sine (Classic)</option>
+            <option value="triangle">Triangle</option>
+            <option value="sawtooth">Sawtooth</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label>Portamento (Glide)</label>
+          <input
+            type="range"
+            id="glide"
+            min="0"
+            max="1"
+            step="0.01"
+            value="0.2"
+          />
+        </div>
+        <div class="control-group">
+          <label>Space (Delay)</label>
+          <input
+            type="range"
+            id="delay"
+            min="0"
+            max="0.8"
+            step="0.01"
+            value="0.4"
+          />
+        </div>
+        <div class="control-group">
+          <label>Master Volume</label>
+          <input
+            type="range"
+            id="volume"
+            min="0"
+            max="1"
+            step="0.01"
+            value="0.8"
+          />
+        </div>
+
+        <div class="transport-controls">
+          <button
+            class="btn btn-record"
+            id="btn-record"
+            onclick="toggleRecording()"
+          >
+            <span id="rec-icon">⬤</span> Record
+          </button>
+          <button class="btn" id="btn-save" onclick="saveWav()" disabled>
+            ↓ Save .WAV
+          </button>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" onclick="switchInterface('xy')">
+          Ethereal Pad (Mouse/Touch)
+        </div>
+        <div class="tab" onclick="switchInterface('keys')">
+          Synthesizer Keys
+        </div>
+      </div>
+
+      <div class="play-area" id="play-area">
+        <div id="xy-pad">
+          <div class="xy-labels" style="bottom: 10px; left: 10px">
+            Low Pitch
+          </div>
+          <div class="xy-labels" style="bottom: 10px; right: 10px">
+            High Pitch
+          </div>
+          <div class="xy-labels" style="top: 10px; left: 10px">High Vol</div>
+          <div class="xy-labels" style="bottom: 30px; left: 10px">Low Vol</div>
+          <div id="xy-indicator"></div>
+        </div>
+
+        <div id="keyboard-pad">
+          <div class="keys-container" id="keys-container"></div>
+        </div>
+      </div>
+
+      <div class="status-bar" id="status-bar">Audio Engine: Standby</div>
+    </div>
+
+    <script>
+      // --- Audio System Variables ---
+      let ctx, osc, gainNode, masterGain, delayNode, feedbackNode;
+      let isPlaying = false;
+
+      // --- Recording System Variables ---
+      let scriptProcessor;
+      let isRecording = false;
+      let leftChannel = [],
+        rightChannel = [];
+      let recordingLength = 0;
+      let sampleRate = 44100;
+      let recStartTime;
+      let timerInterval;
+
+      // --- Synthesizer Constants ---
+      const MIN_FREQ = 65.41; // C2
+      const MAX_FREQ = 2093.0; // C7
+
+      function powerOn() {
+        document.getElementById('power-overlay').style.display = 'none';
+        initAudio();
+        document.getElementById('status-bar').innerText =
+          'Audio Engine: Active | Synthesizer Ready';
+      }
+
+      function initAudio() {
+        ctx = new (window.AudioContext || window.webkitAudioContext)();
+        sampleRate = ctx.sampleRate;
+
+        // Core Nodes
+        osc = ctx.createOscillator();
+        gainNode = ctx.createGain();
+        masterGain = ctx.createGain();
+        delayNode = ctx.createDelay();
+        feedbackNode = ctx.createGain();
+
+        // Initialization settings
+        osc.type = document.getElementById('waveform').value;
+        osc.frequency.value = 440;
+        gainNode.gain.value = 0; // Start silent
+        masterGain.gain.value = document.getElementById('volume').value;
+
+        // Ethereal Delay Effect Routing
+        delayNode.delayTime.value = 0.35;
+        feedbackNode.gain.value = document.getElementById('delay').value;
+
+        // Signal Chain: Osc -> Envelope Gain -> (Dry + Wet) -> Master -> Output
+        osc.connect(gainNode);
+
+        // Dry out
+        gainNode.connect(masterGain);
+
+        // Wet out (Delay Loop)
+        gainNode.connect(delayNode);
+        delayNode.connect(feedbackNode);
+        feedbackNode.connect(delayNode);
+        delayNode.connect(masterGain);
+
+        masterGain.connect(ctx.destination);
+        osc.start();
+
+        // Setup Recording capture node
+        setupRecorder();
+        setupEventListeners();
+        generateKeyboard();
+      }
+
+      // --- Synthesizer Controls ---
+      function setPitchVolume(xRatio, yRatio) {
+        if (!ctx) return;
+
+        // Logarithmic frequency mapping for natural pitch feel
+        const freq = MIN_FREQ * Math.pow(MAX_FREQ / MIN_FREQ, xRatio);
+        const vol = 1.0 - yRatio; // Y=0 is top (loud), Y=1 is bottom (quiet)
+        const glideTime = parseFloat(document.getElementById('glide').value);
+
+        // setTargetAtTime creates the beautiful Theremin glide (portamento)
+        osc.frequency.setTargetAtTime(freq, ctx.currentTime, glideTime + 0.01);
+
+        if (isPlaying) {
+          gainNode.gain.setTargetAtTime(vol, ctx.currentTime, 0.05);
+        }
+      }
+
+      function triggerNoteOn(freq) {
+        if (!ctx) return;
+        isPlaying = true;
+        const glideTime = parseFloat(document.getElementById('glide').value);
+        osc.frequency.setTargetAtTime(freq, ctx.currentTime, glideTime);
+        gainNode.gain.setTargetAtTime(1.0, ctx.currentTime, 0.05);
+      }
+
+      function triggerNoteOff() {
+        if (!ctx) return;
+        isPlaying = false;
+        gainNode.gain.setTargetAtTime(0, ctx.currentTime, 0.1);
+      }
+
+      // --- UI Event Listeners ---
+      function setupEventListeners() {
+        // Settings Listeners
+        document
+          .getElementById('waveform')
+          .addEventListener('change', (e) => (osc.type = e.target.value));
+        document
+          .getElementById('volume')
+          .addEventListener('input', (e) =>
+            masterGain.gain.setTargetAtTime(
+              e.target.value,
+              ctx.currentTime,
+              0.1,
+            ),
+          );
+        document
+          .getElementById('delay')
+          .addEventListener('input', (e) =>
+            feedbackNode.gain.setTargetAtTime(
+              e.target.value,
+              ctx.currentTime,
+              0.1,
+            ),
+          );
+
+        // XY Pad Listeners
+        const pad = document.getElementById('xy-pad');
+        const indicator = document.getElementById('xy-indicator');
+
+        const handlePadMove = (e) => {
+          const rect = pad.getBoundingClientRect();
+          // Fallback for touch events
+          const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+          const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+          let x = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+          let y = Math.max(0, Math.min(1, (clientY - rect.top) / rect.height));
+
+          indicator.style.left = `${x * 100}%`;
+          indicator.style.top = `${y * 100}%`;
+          setPitchVolume(x, y);
+        };
+
+        const startPad = (e) => {
+          e.preventDefault();
+          isPlaying = true;
+          indicator.style.opacity = 1;
+          handlePadMove(e);
+        };
+
+        const stopPad = (e) => {
+          e.preventDefault();
+          triggerNoteOff();
+          indicator.style.opacity = 0;
+        };
+
+        pad.addEventListener('mousedown', startPad);
+        pad.addEventListener('mousemove', (e) => {
+          if (isPlaying) handlePadMove(e);
+        });
+        pad.addEventListener('mouseup', stopPad);
+        pad.addEventListener('mouseleave', stopPad);
+
+        // Touch support
+        pad.addEventListener('touchstart', startPad, { passive: false });
+        pad.addEventListener(
+          'touchmove',
+          (e) => {
+            if (isPlaying) handlePadMove(e);
+          },
+          { passive: false },
+        );
+        pad.addEventListener('touchend', stopPad);
+      }
+
+      // --- Keyboard Generation ---
+      function generateKeyboard() {
+        const container = document.getElementById('keys-container');
+        // Base frequencies for C4 octave
+        const notes = [
+          { note: 'C4', freq: 261.63, type: 'white' },
+          { note: 'C#4', freq: 277.18, type: 'black' },
+          { note: 'D4', freq: 293.66, type: 'white' },
+          { note: 'D#4', freq: 311.13, type: 'black' },
+          { note: 'E4', freq: 329.63, type: 'white' },
+          { note: 'F4', freq: 349.23, type: 'white' },
+          { note: 'F#4', freq: 369.99, type: 'black' },
+          { note: 'G4', freq: 392.0, type: 'white' },
+          { note: 'G#4', freq: 415.3, type: 'black' },
+          { note: 'A4', freq: 440.0, type: 'white' },
+          { note: 'A#4', freq: 466.16, type: 'black' },
+          { note: 'B4', freq: 493.88, type: 'white' },
+          { note: 'C5', freq: 523.25, type: 'white' },
+        ];
+
+        notes.forEach((n) => {
+          const key = document.createElement('div');
+          key.className = `key ${n.type}`;
+
+          const startNote = (e) => {
+            e.preventDefault();
+            key.classList.add('active');
+            triggerNoteOn(n.freq);
+          };
+          const stopNote = (e) => {
+            e.preventDefault();
+            key.classList.remove('active');
+            triggerNoteOff();
+          };
+
+          key.addEventListener('mousedown', startNote);
+          key.addEventListener('mouseup', stopNote);
+          key.addEventListener('mouseleave', stopNote);
+
+          key.addEventListener('touchstart', startNote, { passive: false });
+          key.addEventListener('touchend', stopNote);
+
+          container.appendChild(key);
+        });
+      }
+
+      function switchInterface(type) {
+        document
+          .querySelectorAll('.tab')
+          .forEach((t) => t.classList.remove('active'));
+        event.target.classList.add('active');
+
+        if (type === 'xy') {
+          document.getElementById('xy-pad').style.display = 'block';
+          document.getElementById('keyboard-pad').style.display = 'none';
+        } else {
+          document.getElementById('xy-pad').style.display = 'none';
+          document.getElementById('keyboard-pad').style.display = 'flex';
+        }
+        triggerNoteOff();
+      }
+
+      // ==========================================
+      // RAW .WAV RECORDING SYSTEM
+      // Using ScriptProcessor to capture exact PCM data
+      // ==========================================
+      function setupRecorder() {
+        // Buffer size 4096, 2 input channels, 2 output channels
+        scriptProcessor = ctx.createScriptProcessor(4096, 2, 2);
+
+        // Tap into the master output
+        masterGain.connect(scriptProcessor);
+        scriptProcessor.connect(ctx.destination);
+
+        scriptProcessor.onaudioprocess = function (e) {
+          if (!isRecording) return;
+          // Get raw audio data
+          const left = e.inputBuffer.getChannelData(0);
+          const right = e.inputBuffer.getChannelData(1);
+
+          // Clone the arrays so they don't get overwritten
+          leftChannel.push(new Float32Array(left));
+          rightChannel.push(new Float32Array(right));
+          recordingLength += 4096;
+        };
+      }
+
+      function toggleRecording() {
+        const btn = document.getElementById('btn-record');
+        const saveBtn = document.getElementById('btn-save');
+
+        if (!isRecording) {
+          // Start
+          leftChannel = [];
+          rightChannel = [];
+          recordingLength = 0;
+          isRecording = true;
+
+          btn.classList.add('recording');
+          btn.innerHTML = '<span id="rec-icon">⏹</span> Stop Rec';
+          saveBtn.disabled = true;
+
+          recStartTime = Date.now();
+          timerInterval = setInterval(updateTimer, 100);
+          document.getElementById('status-bar').innerText = 'Recording...';
+        } else {
+          // Stop
+          isRecording = false;
+          btn.classList.remove('recording');
+          btn.innerHTML = '<span id="rec-icon">⬤</span> Record';
+          saveBtn.disabled = false;
+
+          clearInterval(timerInterval);
+          document.getElementById('status-bar').innerText =
+            'Recording captured. Ready to save.';
+        }
+      }
+
+      function updateTimer() {
+        const diff = Date.now() - recStartTime;
+        const mins = Math.floor(diff / 60000)
+          .toString()
+          .padStart(2, '0');
+        const secs = Math.floor((diff % 60000) / 1000)
+          .toString()
+          .padStart(2, '0');
+        const ms = Math.floor((diff % 1000) / 10)
+          .toString()
+          .padStart(2, '0');
+        document.getElementById('timer').innerText = `${mins}:${secs}:${ms}`;
+      }
+
+      // --- WAV Encoding Logic ---
+      function mergeBuffers(channelBuffer, recordingLength) {
+        let result = new Float32Array(recordingLength);
+        let offset = 0;
+        for (let i = 0; i < channelBuffer.length; i++) {
+          result.set(channelBuffer[i], offset);
+          offset += channelBuffer[i].length;
+        }
+        return result;
+      }
+
+      function interleave(leftChannel, rightChannel) {
+        let length = leftChannel.length + rightChannel.length;
+        let result = new Float32Array(length);
+        let inputIndex = 0;
+        for (let index = 0; index < length; ) {
+          result[index++] = leftChannel[inputIndex];
+          result[index++] = rightChannel[inputIndex];
+          inputIndex++;
+        }
+        return result;
+      }
+
+      function writeUTFBytes(view, offset, string) {
+        for (let i = 0; i < string.length; i++) {
+          view.setUint8(offset + i, string.charCodeAt(i));
+        }
+      }
+
+      function saveWav() {
+        document.getElementById('status-bar').innerText =
+          'Encoding WAV file...';
+
+        // Flatten arrays
+        const leftBuffer = mergeBuffers(leftChannel, recordingLength);
+        const rightBuffer = mergeBuffers(rightChannel, recordingLength);
+
+        // Interleave channels for stereo
+        const interleaved = interleave(leftBuffer, rightBuffer);
+
+        // Create WAV header
+        const buffer = new ArrayBuffer(44 + interleaved.length * 2);
+        const view = new DataView(buffer);
+
+        // RIFF chunk descriptor
+        writeUTFBytes(view, 0, 'RIFF');
+        view.setUint32(4, 36 + interleaved.length * 2, true);
+        writeUTFBytes(view, 8, 'WAVE');
+
+        // FMT sub-chunk
+        writeUTFBytes(view, 12, 'fmt ');
+        view.setUint32(16, 16, true); // chunkSize
+        view.setUint16(20, 1, true); // wFormatTag (PCM)
+        view.setUint16(22, 2, true); // wChannels (Stereo)
+        view.setUint32(24, sampleRate, true); // dwSamplesPerSec
+        view.setUint32(28, sampleRate * 4, true); // dwAvgBytesPerSec
+        view.setUint16(32, 4, true); // wBlockAlign
+        view.setUint16(34, 16, true); // wBitsPerSample
+
+        // Data sub-chunk
+        writeUTFBytes(view, 36, 'data');
+        view.setUint32(40, interleaved.length * 2, true);
+
+        // Write PCM samples
+        let offset = 44;
+        for (let i = 0; i < interleaved.length; i++, offset += 2) {
+          let s = Math.max(-1, Math.min(1, interleaved[i]));
+          // 16-bit PCM conversion
+          view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+        }
+
+        // Trigger download
+        const blob = new Blob([view], { type: 'audio/wav' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = `AETHER_Recording_${new Date().getTime()}.wav`;
+        document.body.appendChild(a);
+        a.click();
+
+        setTimeout(() => {
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+          document.getElementById('status-bar').innerText =
+            'WAV file saved successfully.';
+        }, 100);
+      }
+    </script>
+  </body>
+</html>

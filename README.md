@@ -1,68 +1,52 @@
-# AETHER | Theremin DAW 🛸🎶
+# AETHER | Theremin DAW & Ambient Looper 🛸🎶
 
-A completely browser-based, single-file Digital Audio Workstation (DAW) dedicated exclusively to the ethereal sounds of the Theremin. Built with plain HTML, CSS, and vanilla JavaScript, AETHER requires no installation, no dependencies, and no servers.
+A completely browser-based, zero-dependency Digital Audio Workstation (DAW) dedicated to the ethereal sounds of the Theremin and ambient layered soundscapes. Built with plain HTML, CSS, and vanilla Web Audio JavaScript, AETHER requires no installation, no dependencies, and no servers.
 
-## ✨ Features
+---
 
-- **True Theremin Emulation:** Replicates the continuous pitch and volume gliding (portamento) characteristic of a physical Theremin.
-- **Dual Play Interfaces:** \* **Ethereal Pad:** A 2D XY pad that utilizes mouse or touch tracking to control pitch and volume simultaneously.
-  - **Synthesizer Keys:** A traditional piano-roll interface for discrete note triggering.
-- **Built-in Effects:** Real-time control over waveform types, glide speed (portamento), and spatial delay (feedback loop).
-- **Native `.WAV` Recording:** Captures raw, uncompressed 16-bit PCM audio data directly from the audio graph and exports a pristine `.wav` file locally.
-- **Modern Dark UI:** A sleek, distraction-free interface designed for low-light studio environments.
+## ✨ Features & Architecture
+
+### 🎛️ Theremin Sound Engine
+- **Continuous Portamento Emulation:** True logarithmic pitch gliding replicating a physical theremin antenna.
+- **Natural Vibrato LFO:** Dedicated LFO modulating oscillator pitch with rate (1–12 Hz) and depth (cents) controls.
+- **Warm Tone Biquad Filter:** Adjustable low-pass filter (200 Hz – 12 kHz) for shaping resonance and warmth.
+- **Damped Tape Space Delay:** Stereo feedback delay circuit with analog high-frequency dampening.
+- **Live Pitch HUD & Tuner:** Real-time note name (e.g. `A4`, `C#5`) and exact frequency display.
+- **Live Audio Oscilloscope:** Real-time visual representation of output waveforms.
+
+### 🛸 Curated Sound Preset Library
+Includes expertly configured factory presets plus user custom preset creation:
+- **Clara Rockmore (Concert):** Classic, pure operatic theremin tone.
+- **1950s Sci-Fi UFO:** Classic retro wobble with deep cosmic echo.
+- **Blade Runner Vangelis:** Rich, filtered sawtooth with wide synth portamento.
+- **Ghostly Opera Voice:** Eerie, vocal formant resonance with ethereal delay wash.
+- **Cosmic Ambient Wash:** Super-smooth glide with long atmospheric decay.
+- **Vintage Tube Radio:** Warm, saturated vintage radio tone.
+- **8-Bit Chiptune:** Crisp, stepped retro square wave lead.
+- **Deep Sub Drone:** Low-frequency foundation drone.
+- **Custom Presets:** Save, load, export, and import custom presets to/from JSON files (persisted in `localStorage`).
+
+### 🔁 4-Track Synchronized Ambient Looper
+- **4 Independent Audio Channels:** Record, overdub, layer, and arrange ambient soundscapes.
+- **Master Cycle Synchronization:** Track 1 establishes master loop duration; subsequent tracks synchronize seamlessly.
+- **Independent Channel Controls:**
+  - Record / Overdub / Replace triggers
+  - Play / Pause / Stop states
+  - Mute (M) and Solo (S) buttons
+  - Volume slider (0% to 150%)
+  - Stereo Pan slider (L50 to R50)
+  - ↺ Reverse playback toggle (reversed theremin textures)
+  - Live waveform visualizer with synchronized playhead
+- **BPM Clock & Metronome:** Integrated click track with Tap Tempo and tempo adjustments.
+- **Stem & Mixdown Export:** Download individual track stems or an interleaved master mixdown as uncompressed 16-bit PCM `.WAV` files.
 
 ---
 
 ## 🚀 How to Use
 
-Because AETHER is a zero-dependency web app, getting started takes seconds:
-
-1. Create a new text file and name it `index.html`.
-2. Paste the AETHER source code into the file and save it.
-3. Double-click `index.html` to open it in any modern web browser (Chrome, Firefox, Safari, Edge).
-4. Click the **"Power On"** button to initialize the browser's audio engine.
-
----
-
-## 🎛️ Controls & Interface
-
-### The Playing Surfaces
-
-- **Ethereal Pad (XY Mode):** Click and drag (or touch and drag) inside the grid.
-  - **X-Axis (Left/Right):** Controls the pitch (frequency). Moving right increases the pitch logarithmically.
-  - **Y-Axis (Up/Down):** Controls the volume (amplitude). Moving up increases the volume.
-- **Synthesizer Keys:** Click or tap individual keys to play specific notes. The glide setting will still affect how the notes transition into one another.
-
-### The Toolbar
-
-- **Waveform:** Choose the core sound of the oscillator.
-  - _Sine:_ The classic, pure Theremin tone.
-  - _Triangle:_ Slightly brighter and warmer.
-  - _Sawtooth:_ Harsh, buzzing, and highly synthetic.
-- **Portamento (Glide):** Controls how long it takes for the audio engine to slide from one pitch/volume to the next. Higher values create a "lazier," more authentic Theremin swoop.
-- **Space (Delay):** Controls the feedback loop of the built-in delay node. Turning this up creates an echoing, atmospheric wash of sound.
-- **Master Volume:** Overall output gain.
-
-### Recording Studio
-
-1. Click **Record** to begin capturing your performance. The timer will start running.
-2. Play your instrument using either the XY pad or the keys.
-3. Click **Stop Rec** when finished.
-4. Click **↓ Save .WAV** to instantly download your uncompressed, high-fidelity audio file.
-
----
-
-## 🧠 How It Works (Under the Hood)
-
-AETHER relies on the browser's native **Web Audio API** to generate and process sound.
-
-**The Signal Chain:**
-
-1. **OscillatorNode:** Generates the raw waveform (`sine`, `triangle`, `sawtooth`).
-2. **GainNode (Envelope):** Controls the volume of the oscillator based on your mouse's Y-position or key releases.
-3. **DelayNode & Feedback Loop:** A portion of the audio is routed into a delay node, which feeds back into itself based on your "Space" setting, creating a custom reverb effect.
-4. **Master Gain:** Final volume staging.
-5. **AudioDestination:** Your speakers.
-
-**Custom WAV Encoder:**
-Browsers typically only record compressed audio natively (like `.webm`). To bypass this, AETHER uses a `ScriptProcessorNode` to intercept the raw floating-point audio data before it hits your speakers. When you save your recording, the app mathematically interleaves the left and right stereo channels, converts the floating-point data into 16-bit PCM data, writes a standard 44-byte RIFF/WAVE header, and generates a downloadable Blob entirely client-side.
+1. Double-click `index.html` in any modern web browser.
+2. Click **"Power On"** to start the Web Audio API context.
+3. Select a preset from the top bar or sculpt your sound using the synthesizer parameters.
+4. Play using either the **Ethereal Pad (XY Mode)** or the **Synthesizer Keys**.
+5. Build multi-layered soundscapes using the **4-Track Ambient Looper** below the playing surface.
+6. Export your final master mixdown or individual stems as `.WAV` files!

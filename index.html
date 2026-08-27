@@ -36,15 +36,15 @@
 
       body {
         margin: 0;
-        padding: 16px;
+        padding: 8px 14px;
         background: var(--bg-color);
         background-image: radial-gradient(circle at 50% 0%, #161b2c 0%, var(--bg-color) 75%);
         color: var(--text-main);
-        min-height: 100vh;
+        height: 100vh;
         display: flex;
         flex-direction: column;
         align-items: center;
-        overflow-x: hidden;
+        overflow: hidden;
       }
 
       /* Power Overlay for Browser Autoplay Policy */
@@ -90,11 +90,12 @@
       /* App Container */
       .app-container {
         width: 100%;
-        max-width: 1200px;
+        max-width: 1560px;
+        height: 100%;
+        min-height: 0;
         display: flex;
         flex-direction: column;
-        gap: 16px;
-        padding-bottom: 30px;
+        gap: 8px;
       }
 
       /* Header */
@@ -103,9 +104,10 @@
         justify-content: space-between;
         align-items: center;
         border-bottom: 1px solid var(--panel-border);
-        padding-bottom: 14px;
+        padding-bottom: 8px;
         flex-wrap: wrap;
-        gap: 12px;
+        gap: 10px;
+        flex-shrink: 0;
       }
 
       .logo-group {
@@ -116,7 +118,7 @@
 
       h1 {
         margin: 0;
-        font-size: 24px;
+        font-size: 19px;
         font-weight: 300;
         letter-spacing: 3px;
         color: var(--text-main);
@@ -149,16 +151,16 @@
         gap: 8px;
         background: var(--panel-bg);
         border: 1px solid var(--panel-border);
-        padding: 6px 14px;
+        padding: 4px 12px;
         border-radius: 20px;
         font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-        font-size: 13px;
+        font-size: 12px;
       }
 
       .pitch-hud .note {
         color: var(--accent-amber);
         font-weight: 700;
-        font-size: 15px;
+        font-size: 13px;
       }
 
       .pitch-hud .freq {
@@ -167,7 +169,7 @@
 
       #timer {
         font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-        font-size: 16px;
+        font-size: 14px;
         color: var(--text-muted);
         min-width: 76px;
         text-align: right;
@@ -178,12 +180,13 @@
         background: var(--panel-bg);
         border: 1px solid var(--panel-border);
         border-radius: var(--border-radius);
-        padding: 12px 18px;
+        padding: 7px 12px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 12px;
+        gap: 10px;
         flex-wrap: wrap;
+        flex-shrink: 0;
       }
 
       .preset-left {
@@ -214,7 +217,7 @@
         background: var(--panel-sub);
         border: 1px solid var(--panel-border);
         color: var(--text-main);
-        padding: 8px 12px;
+        padding: 4px 8px;
         border-radius: var(--border-radius-sm);
         outline: none;
         cursor: pointer;
@@ -236,7 +239,7 @@
         background: var(--panel-sub);
         border: 1px solid var(--panel-border);
         color: var(--text-muted);
-        padding: 5px 10px;
+        padding: 3px 9px;
         border-radius: 14px;
         font-size: 11px;
         cursor: pointer;
@@ -264,18 +267,19 @@
       /* Synth Sound Controls Toolbar */
       .synth-toolbar {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-        gap: 12px;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 8px 14px;
         background: var(--panel-bg);
         border: 1px solid var(--panel-border);
-        padding: 16px 20px;
+        padding: 8px 14px;
         border-radius: var(--border-radius);
+        flex-shrink: 0;
       }
 
       .control-group {
         display: flex;
         flex-direction: column;
-        gap: 6px;
+        gap: 2px;
       }
 
       .control-group-header {
@@ -306,15 +310,15 @@
         border-radius: 3px;
         outline: none;
         padding: 0;
-        margin: 6px 0;
+        margin: 3px 0;
         cursor: pointer;
       }
 
       input[type='range']::-webkit-slider-thumb {
         -webkit-appearance: none;
         appearance: none;
-        width: 15px;
-        height: 15px;
+        width: 13px;
+        height: 13px;
         background: var(--accent-cyan);
         border-radius: 50%;
         cursor: pointer;
@@ -331,7 +335,7 @@
         background: var(--panel-sub);
         border: 1px solid var(--panel-border);
         color: var(--text-main);
-        padding: 8px 14px;
+        padding: 6px 12px;
         border-radius: var(--border-radius-sm);
         cursor: pointer;
         font-size: 12px;
@@ -381,8 +385,14 @@
       }
 
       .btn-sm {
-        padding: 4px 8px;
+        padding: 3px 8px;
         font-size: 11px;
+      }
+
+      .btn-icon {
+        padding: 0 5px;
+        font-size: 10px;
+        line-height: 1.5;
       }
 
       @keyframes pulse {
@@ -391,11 +401,23 @@
         100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); }
       }
 
+      /* Main Workspace: play area left, looper column right */
+      .workspace {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 400px;
+        gap: 12px;
+        align-items: stretch;
+        flex: 1;
+        min-height: 0;
+      }
+
       /* Audio Visualizer & Tabs Layout */
       .play-section {
         display: flex;
         flex-direction: column;
         gap: 0;
+        min-width: 0;
+        min-height: 0;
       }
 
       .section-nav-bar {
@@ -411,7 +433,7 @@
       }
 
       .tab {
-        padding: 10px 18px;
+        padding: 7px 16px;
         background: var(--panel-bg);
         color: var(--text-muted);
         border: 1px solid var(--panel-border);
@@ -452,7 +474,8 @@
 
       /* Play Area Viewports */
       .play-area {
-        height: 320px;
+        flex: 1;
+        min-height: 0;
         background: var(--panel-sub);
         border: 1px solid var(--panel-border);
         border-radius: 0 var(--border-radius) var(--border-radius) var(--border-radius);
@@ -576,10 +599,11 @@
         background: var(--panel-bg);
         border: 1px solid var(--panel-border);
         border-radius: var(--border-radius);
-        padding: 16px 20px;
+        padding: 8px 10px;
         display: flex;
         flex-direction: column;
-        gap: 14px;
+        gap: 8px;
+        min-height: 0;
       }
 
       .looper-header {
@@ -587,9 +611,10 @@
         justify-content: space-between;
         align-items: center;
         flex-wrap: wrap;
-        gap: 12px;
-        padding-bottom: 12px;
+        gap: 6px;
+        padding-bottom: 6px;
         border-bottom: 1px solid var(--panel-border);
+        flex-shrink: 0;
       }
 
       .looper-title-group {
@@ -599,7 +624,7 @@
       }
 
       .looper-title {
-        font-size: 15px;
+        font-size: 11px;
         font-weight: 600;
         letter-spacing: 1.5px;
         text-transform: uppercase;
@@ -622,8 +647,34 @@
       .looper-transport {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
         flex-wrap: wrap;
+        width: 100%;
+      }
+
+      .looper-actions {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 4px;
+        width: 100%;
+      }
+
+      /* In the two-column workspace the looper header stacks vertically */
+      @media (min-width: 1101px) {
+        .looper-header {
+          flex-direction: column;
+          align-items: stretch;
+        }
+      }
+
+      @media (max-width: 1100px) {
+        .looper-transport {
+          width: auto;
+        }
+        .looper-actions {
+          display: flex;
+          width: auto;
+        }
       }
 
       .tempo-control {
@@ -632,7 +683,7 @@
         gap: 6px;
         background: var(--panel-sub);
         border: 1px solid var(--panel-border);
-        padding: 4px 10px;
+        padding: 1px 8px;
         border-radius: var(--border-radius-sm);
       }
 
@@ -653,11 +704,49 @@
         outline: none;
       }
 
-      /* Looper Tracks Grid */
+      /* Looper Tracks Grid — single column that divides the panel height evenly */
       .looper-tracks-grid {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 12px;
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(4, minmax(86px, 1fr));
+        gap: 6px;
+        flex: 1;
+        min-height: 0;
+        /* Safety valve: on very short viewports the column scrolls
+           instead of squashing the cards. */
+        overflow-y: auto;
+        scrollbar-width: thin;
+      }
+
+      /* Below the two-column breakpoint the workspace stacks and the
+         looper spreads back out horizontally. */
+      @media (max-width: 1100px) {
+        body {
+          height: auto;
+          min-height: 100vh;
+          overflow-x: hidden;
+          overflow-y: auto;
+        }
+        .app-container {
+          height: auto;
+          padding-bottom: 24px;
+        }
+        .workspace {
+          grid-template-columns: 1fr;
+          flex: none;
+        }
+        .play-area {
+          min-height: 320px;
+        }
+        .looper-tracks-grid {
+          grid-template-columns: repeat(4, 1fr);
+          grid-template-rows: none;
+          flex: none;
+        }
+        .track-wave-container {
+          flex: none;
+          height: 44px;
+        }
       }
 
       @media (max-width: 900px) {
@@ -676,12 +765,13 @@
         background: var(--panel-sub);
         border: 1px solid var(--panel-border);
         border-radius: var(--border-radius-sm);
-        padding: 12px;
+        padding: 5px 8px;
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 3px;
         transition: border-color 0.2s ease;
         position: relative;
+        min-height: 0;
       }
 
       .track-card.recording {
@@ -695,12 +785,20 @@
 
       .track-header {
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-start;
         align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+
+      .track-io {
+        display: flex;
+        gap: 4px;
+        margin-left: auto;
       }
 
       .track-num {
-        font-size: 12px;
+        font-size: 10px;
         font-weight: 700;
         color: var(--text-main);
         letter-spacing: 0.5px;
@@ -736,7 +834,8 @@
       /* Mini Waveform & Playhead */
       .track-wave-container {
         width: 100%;
-        height: 44px;
+        flex: 1;
+        min-height: 20px;
         background: #0c0e15;
         border: 1px solid var(--panel-border);
         border-radius: 4px;
@@ -766,14 +865,14 @@
       /* Track Buttons */
       .track-btn-row {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 6px;
+        grid-template-columns: 1.2fr 1.2fr 1fr 1fr 0.65fr;
+        gap: 4px;
+        flex-shrink: 0;
       }
 
-      .track-btn-row-3 {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 4px;
+      .track-btn-row .btn {
+        padding: 2px 4px;
+        font-size: 10px;
       }
 
       .btn-toggle {
@@ -800,15 +899,39 @@
       }
 
       /* Sliders inside Track */
+      .track-slider-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        flex-shrink: 0;
+      }
+
       .track-slider-group {
         display: flex;
-        flex-direction: column;
-        gap: 2px;
+        flex-direction: row;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+      }
+
+      .track-slider-group input[type='range'] {
+        margin: 0;
+        flex: 1;
+        min-width: 0;
+        height: 4px;
+      }
+
+      .track-slider-group input[type='range']::-webkit-slider-thumb {
+        width: 11px;
+        height: 11px;
       }
 
       .track-slider-label {
         display: flex;
         justify-content: space-between;
+        gap: 4px;
+        width: 54px;
+        flex-shrink: 0;
         font-size: 9px;
         text-transform: uppercase;
         color: var(--text-dim);
@@ -874,7 +997,8 @@
         align-items: center;
         font-size: 11px;
         color: var(--text-muted);
-        padding: 4px 6px;
+        padding: 0 6px;
+        flex-shrink: 0;
         font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       }
     </style>
@@ -1017,8 +1141,10 @@
         </div>
       </div>
 
-      <!-- Play Area Section (Tabs & Oscilloscope) -->
-      <div class="play-section">
+      <!-- Main Workspace: Play Area (left) + Looper Column (right) -->
+      <div class="workspace">
+        <!-- Play Area Section (Tabs & Oscilloscope) -->
+        <div class="play-section">
         <div class="section-nav-bar">
           <div class="tabs">
             <div class="tab active" id="tab-xy" onclick="switchInterface('xy')">
@@ -1065,10 +1191,10 @@
         </div>
       </div>
 
-      <!-- ======================================================== -->
-      <!-- 4-TRACK AMBIENT LOOPER STATION -->
-      <!-- ======================================================== -->
-      <div class="looper-panel">
+        <!-- ======================================================== -->
+        <!-- 4-TRACK AMBIENT LOOPER STATION -->
+        <!-- ======================================================== -->
+        <div class="looper-panel">
         <div class="looper-header">
           <div class="looper-title-group">
             <div class="looper-title">
@@ -1088,10 +1214,12 @@
               🔔 Click <span id="metro-status">Off</span>
             </button>
 
-            <button class="btn btn-sm" onclick="playAllLooperTracks()">▶ Play All</button>
-            <button class="btn btn-sm" onclick="stopAllLooperTracks()">⏹ Stop All</button>
-            <button class="btn btn-sm" onclick="clearAllLooperTracks()">🗑️ Clear All</button>
-            <button class="btn btn-sm btn-primary" onclick="exportLooperMixdownWav()">↓ Export Mixdown .WAV</button>
+            <div class="looper-actions">
+              <button class="btn btn-sm" onclick="playAllLooperTracks()">▶ Play All</button>
+              <button class="btn btn-sm" onclick="stopAllLooperTracks()">⏹ Stop All</button>
+              <button class="btn btn-sm" onclick="clearAllLooperTracks()">🗑️ Clear All</button>
+              <button class="btn btn-sm btn-primary" onclick="exportLooperMixdownWav()" title="Export Mixdown .WAV">↓ Mixdown</button>
+            </div>
           </div>
         </div>
 
@@ -1100,8 +1228,12 @@
           <!-- Track 1 -->
           <div class="track-card" id="track-card-0">
             <div class="track-header">
-              <span class="track-num">TRACK 1 (Master)</span>
+              <span class="track-num">TRACK 1 (MASTER)</span>
               <span class="track-state-pill" id="track-pill-0">EMPTY</span>
+              <div class="track-io">
+                <button class="btn btn-icon" onclick="exportTrackWav(0)" title="Export Track WAV">↓</button>
+                <button class="btn btn-icon" style="color: var(--accent-rose)" onclick="clearTrack(0)" title="Clear Track">🗑️</button>
+              </div>
             </div>
             <div class="track-wave-container">
               <canvas class="track-wave-canvas" id="track-canvas-0"></canvas>
@@ -1110,29 +1242,25 @@
             <div class="track-btn-row">
               <button class="btn btn-sm btn-record" id="btn-rec-0" onclick="handleTrackRecordClick(0)">⬤ Rec</button>
               <button class="btn btn-sm" id="btn-play-0" onclick="handleTrackPlayClick(0)" disabled>▶ Play</button>
-            </div>
-            <div class="track-btn-row-3">
               <button class="btn btn-toggle btn-mute" id="btn-mute-0" onclick="toggleTrackMute(0)">Mute</button>
               <button class="btn btn-toggle btn-solo" id="btn-solo-0" onclick="toggleTrackSolo(0)">Solo</button>
-              <button class="btn btn-toggle" id="btn-rev-0" onclick="toggleTrackReverse(0)">↺ Rev</button>
+              <button class="btn btn-toggle" id="btn-rev-0" onclick="toggleTrackReverse(0)" title="Reverse">↺</button>
             </div>
-            <div class="track-slider-group">
-              <div class="track-slider-label">
-                <span>Vol</span>
-                <span id="track-vol-val-0">100%</span>
+            <div class="track-slider-row">
+              <div class="track-slider-group">
+                <div class="track-slider-label">
+                  <span>Vol</span>
+                  <span id="track-vol-val-0">100%</span>
+                </div>
+                <input type="range" min="0" max="1.5" step="0.01" value="1.0" id="track-vol-0" oninput="setTrackVolume(0, this.value)" />
               </div>
-              <input type="range" min="0" max="1.5" step="0.01" value="1.0" id="track-vol-0" oninput="setTrackVolume(0, this.value)" />
-            </div>
-            <div class="track-slider-group">
-              <div class="track-slider-label">
-                <span>Pan</span>
-                <span id="track-pan-val-0">C</span>
+              <div class="track-slider-group">
+                <div class="track-slider-label">
+                  <span>Pan</span>
+                  <span id="track-pan-val-0">C</span>
+                </div>
+                <input type="range" min="-1" max="1" step="0.05" value="0" id="track-pan-0" oninput="setTrackPan(0, this.value)" />
               </div>
-              <input type="range" min="-1" max="1" step="0.05" value="0" id="track-pan-0" oninput="setTrackPan(0, this.value)" />
-            </div>
-            <div style="display: flex; justify-content: space-between; gap: 4px; margin-top: 2px;">
-              <button class="btn btn-sm" style="flex: 1" onclick="exportTrackWav(0)" title="Export Track WAV">↓ Stem</button>
-              <button class="btn btn-sm" style="color: var(--accent-rose)" onclick="clearTrack(0)" title="Clear Track">🗑️</button>
             </div>
           </div>
 
@@ -1141,6 +1269,10 @@
             <div class="track-header">
               <span class="track-num">TRACK 2</span>
               <span class="track-state-pill" id="track-pill-1">EMPTY</span>
+              <div class="track-io">
+                <button class="btn btn-icon" onclick="exportTrackWav(1)" title="Export Track WAV">↓</button>
+                <button class="btn btn-icon" style="color: var(--accent-rose)" onclick="clearTrack(1)" title="Clear Track">🗑️</button>
+              </div>
             </div>
             <div class="track-wave-container">
               <canvas class="track-wave-canvas" id="track-canvas-1"></canvas>
@@ -1149,29 +1281,25 @@
             <div class="track-btn-row">
               <button class="btn btn-sm btn-record" id="btn-rec-1" onclick="handleTrackRecordClick(1)">⬤ Rec</button>
               <button class="btn btn-sm" id="btn-play-1" onclick="handleTrackPlayClick(1)" disabled>▶ Play</button>
-            </div>
-            <div class="track-btn-row-3">
               <button class="btn btn-toggle btn-mute" id="btn-mute-1" onclick="toggleTrackMute(1)">Mute</button>
               <button class="btn btn-toggle btn-solo" id="btn-solo-1" onclick="toggleTrackSolo(1)">Solo</button>
-              <button class="btn btn-toggle" id="btn-rev-1" onclick="toggleTrackReverse(1)">↺ Rev</button>
+              <button class="btn btn-toggle" id="btn-rev-1" onclick="toggleTrackReverse(1)" title="Reverse">↺</button>
             </div>
-            <div class="track-slider-group">
-              <div class="track-slider-label">
-                <span>Vol</span>
-                <span id="track-vol-val-1">100%</span>
+            <div class="track-slider-row">
+              <div class="track-slider-group">
+                <div class="track-slider-label">
+                  <span>Vol</span>
+                  <span id="track-vol-val-1">100%</span>
+                </div>
+                <input type="range" min="0" max="1.5" step="0.01" value="1.0" id="track-vol-1" oninput="setTrackVolume(1, this.value)" />
               </div>
-              <input type="range" min="0" max="1.5" step="0.01" value="1.0" id="track-vol-1" oninput="setTrackVolume(1, this.value)" />
-            </div>
-            <div class="track-slider-group">
-              <div class="track-slider-label">
-                <span>Pan</span>
-                <span id="track-pan-val-1">C</span>
+              <div class="track-slider-group">
+                <div class="track-slider-label">
+                  <span>Pan</span>
+                  <span id="track-pan-val-1">C</span>
+                </div>
+                <input type="range" min="-1" max="1" step="0.05" value="0" id="track-pan-1" oninput="setTrackPan(1, this.value)" />
               </div>
-              <input type="range" min="-1" max="1" step="0.05" value="0" id="track-pan-1" oninput="setTrackPan(1, this.value)" />
-            </div>
-            <div style="display: flex; justify-content: space-between; gap: 4px; margin-top: 2px;">
-              <button class="btn btn-sm" style="flex: 1" onclick="exportTrackWav(1)" title="Export Track WAV">↓ Stem</button>
-              <button class="btn btn-sm" style="color: var(--accent-rose)" onclick="clearTrack(1)" title="Clear Track">🗑️</button>
             </div>
           </div>
 
@@ -1180,6 +1308,10 @@
             <div class="track-header">
               <span class="track-num">TRACK 3</span>
               <span class="track-state-pill" id="track-pill-2">EMPTY</span>
+              <div class="track-io">
+                <button class="btn btn-icon" onclick="exportTrackWav(2)" title="Export Track WAV">↓</button>
+                <button class="btn btn-icon" style="color: var(--accent-rose)" onclick="clearTrack(2)" title="Clear Track">🗑️</button>
+              </div>
             </div>
             <div class="track-wave-container">
               <canvas class="track-wave-canvas" id="track-canvas-2"></canvas>
@@ -1188,29 +1320,25 @@
             <div class="track-btn-row">
               <button class="btn btn-sm btn-record" id="btn-rec-2" onclick="handleTrackRecordClick(2)">⬤ Rec</button>
               <button class="btn btn-sm" id="btn-play-2" onclick="handleTrackPlayClick(2)" disabled>▶ Play</button>
-            </div>
-            <div class="track-btn-row-3">
               <button class="btn btn-toggle btn-mute" id="btn-mute-2" onclick="toggleTrackMute(2)">Mute</button>
               <button class="btn btn-toggle btn-solo" id="btn-solo-2" onclick="toggleTrackSolo(2)">Solo</button>
-              <button class="btn btn-toggle" id="btn-rev-2" onclick="toggleTrackReverse(2)">↺ Rev</button>
+              <button class="btn btn-toggle" id="btn-rev-2" onclick="toggleTrackReverse(2)" title="Reverse">↺</button>
             </div>
-            <div class="track-slider-group">
-              <div class="track-slider-label">
-                <span>Vol</span>
-                <span id="track-vol-val-2">100%</span>
+            <div class="track-slider-row">
+              <div class="track-slider-group">
+                <div class="track-slider-label">
+                  <span>Vol</span>
+                  <span id="track-vol-val-2">100%</span>
+                </div>
+                <input type="range" min="0" max="1.5" step="0.01" value="1.0" id="track-vol-2" oninput="setTrackVolume(2, this.value)" />
               </div>
-              <input type="range" min="0" max="1.5" step="0.01" value="1.0" id="track-vol-2" oninput="setTrackVolume(2, this.value)" />
-            </div>
-            <div class="track-slider-group">
-              <div class="track-slider-label">
-                <span>Pan</span>
-                <span id="track-pan-val-2">C</span>
+              <div class="track-slider-group">
+                <div class="track-slider-label">
+                  <span>Pan</span>
+                  <span id="track-pan-val-2">C</span>
+                </div>
+                <input type="range" min="-1" max="1" step="0.05" value="0" id="track-pan-2" oninput="setTrackPan(2, this.value)" />
               </div>
-              <input type="range" min="-1" max="1" step="0.05" value="0" id="track-pan-2" oninput="setTrackPan(2, this.value)" />
-            </div>
-            <div style="display: flex; justify-content: space-between; gap: 4px; margin-top: 2px;">
-              <button class="btn btn-sm" style="flex: 1" onclick="exportTrackWav(2)" title="Export Track WAV">↓ Stem</button>
-              <button class="btn btn-sm" style="color: var(--accent-rose)" onclick="clearTrack(2)" title="Clear Track">🗑️</button>
             </div>
           </div>
 
@@ -1219,6 +1347,10 @@
             <div class="track-header">
               <span class="track-num">TRACK 4</span>
               <span class="track-state-pill" id="track-pill-3">EMPTY</span>
+              <div class="track-io">
+                <button class="btn btn-icon" onclick="exportTrackWav(3)" title="Export Track WAV">↓</button>
+                <button class="btn btn-icon" style="color: var(--accent-rose)" onclick="clearTrack(3)" title="Clear Track">🗑️</button>
+              </div>
             </div>
             <div class="track-wave-container">
               <canvas class="track-wave-canvas" id="track-canvas-3"></canvas>
@@ -1227,33 +1359,31 @@
             <div class="track-btn-row">
               <button class="btn btn-sm btn-record" id="btn-rec-3" onclick="handleTrackRecordClick(3)">⬤ Rec</button>
               <button class="btn btn-sm" id="btn-play-3" onclick="handleTrackPlayClick(3)" disabled>▶ Play</button>
-            </div>
-            <div class="track-btn-row-3">
               <button class="btn btn-toggle btn-mute" id="btn-mute-3" onclick="toggleTrackMute(3)">Mute</button>
               <button class="btn btn-toggle btn-solo" id="btn-solo-3" onclick="toggleTrackSolo(3)">Solo</button>
-              <button class="btn btn-toggle" id="btn-rev-3" onclick="toggleTrackReverse(3)">↺ Rev</button>
+              <button class="btn btn-toggle" id="btn-rev-3" onclick="toggleTrackReverse(3)" title="Reverse">↺</button>
             </div>
-            <div class="track-slider-group">
-              <div class="track-slider-label">
-                <span>Vol</span>
-                <span id="track-vol-val-3">100%</span>
+            <div class="track-slider-row">
+              <div class="track-slider-group">
+                <div class="track-slider-label">
+                  <span>Vol</span>
+                  <span id="track-vol-val-3">100%</span>
+                </div>
+                <input type="range" min="0" max="1.5" step="0.01" value="1.0" id="track-vol-3" oninput="setTrackVolume(3, this.value)" />
               </div>
-              <input type="range" min="0" max="1.5" step="0.01" value="1.0" id="track-vol-3" oninput="setTrackVolume(3, this.value)" />
-            </div>
-            <div class="track-slider-group">
-              <div class="track-slider-label">
-                <span>Pan</span>
-                <span id="track-pan-val-3">C</span>
+              <div class="track-slider-group">
+                <div class="track-slider-label">
+                  <span>Pan</span>
+                  <span id="track-pan-val-3">C</span>
+                </div>
+                <input type="range" min="-1" max="1" step="0.05" value="0" id="track-pan-3" oninput="setTrackPan(3, this.value)" />
               </div>
-              <input type="range" min="-1" max="1" step="0.05" value="0" id="track-pan-3" oninput="setTrackPan(3, this.value)" />
-            </div>
-            <div style="display: flex; justify-content: space-between; gap: 4px; margin-top: 2px;">
-              <button class="btn btn-sm" style="flex: 1" onclick="exportTrackWav(3)" title="Export Track WAV">↓ Stem</button>
-              <button class="btn btn-sm" style="color: var(--accent-rose)" onclick="clearTrack(3)" title="Clear Track">🗑️</button>
             </div>
           </div>
         </div>
+        </div>
       </div>
+      <!-- /workspace -->
 
       <!-- Footer Status Bar -->
       <div class="status-bar">

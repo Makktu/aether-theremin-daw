@@ -478,10 +478,54 @@
         min-height: 0;
         background: var(--panel-sub);
         border: 1px solid var(--panel-border);
-        border-radius: 0 var(--border-radius) var(--border-radius) var(--border-radius);
+        border-bottom: none;
+        border-radius: 0 var(--border-radius) 0 0;
         position: relative;
         box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.4);
         overflow: hidden;
+      }
+
+      /* Envelope Shaper Strip (sits under the play area) */
+      .shaper-bar {
+        display: grid;
+        grid-template-columns: auto repeat(6, minmax(90px, 1fr));
+        align-items: center;
+        gap: 8px 14px;
+        background: var(--panel-bg);
+        border: 1px solid var(--panel-border);
+        border-radius: 0 0 var(--border-radius) var(--border-radius);
+        padding: 8px 14px;
+        flex-shrink: 0;
+      }
+
+      .shaper-label {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: var(--accent-cyan);
+        padding-right: 6px;
+        border-right: 1px solid var(--panel-border);
+        align-self: stretch;
+        display: flex;
+        align-items: center;
+      }
+
+      .shaper-bar select {
+        width: 100%;
+        font-size: 12px;
+      }
+
+      @media (max-width: 900px) {
+        .shaper-bar {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        .shaper-label {
+          grid-column: 1 / -1;
+          border-right: none;
+          border-bottom: 1px solid var(--panel-border);
+          padding: 0 0 4px;
+        }
       }
 
       /* XY Pad */
@@ -1189,6 +1233,61 @@
             </div>
           </div>
         </div>
+
+        <!-- Envelope Shaper Strip -->
+        <div class="shaper-bar">
+          <div class="shaper-label">Envelope</div>
+
+          <div class="control-group">
+            <div class="control-group-header">
+              <label>Mode</label>
+            </div>
+            <select id="env-mode" onchange="updateSynthParams()">
+              <option value="sustain">Sustained</option>
+              <option value="oneshot">One-Shot</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <div class="control-group-header">
+              <label>Attack</label>
+              <span class="param-val" id="val-attack">40ms</span>
+            </div>
+            <input type="range" id="env-attack" min="0.001" max="2" step="0.001" value="0.04" oninput="updateSynthParams()" />
+          </div>
+
+          <div class="control-group">
+            <div class="control-group-header">
+              <label>Decay</label>
+              <span class="param-val" id="val-decay">200ms</span>
+            </div>
+            <input type="range" id="env-decay" min="0.005" max="4" step="0.005" value="0.2" oninput="updateSynthParams()" />
+          </div>
+
+          <div class="control-group">
+            <div class="control-group-header">
+              <label>Sustain</label>
+              <span class="param-val" id="val-sustain">100%</span>
+            </div>
+            <input type="range" id="env-sustain" min="0" max="1" step="0.01" value="1" oninput="updateSynthParams()" />
+          </div>
+
+          <div class="control-group">
+            <div class="control-group-header">
+              <label>Release</label>
+              <span class="param-val" id="val-release">120ms</span>
+            </div>
+            <input type="range" id="env-release" min="0.005" max="6" step="0.005" value="0.12" oninput="updateSynthParams()" />
+          </div>
+
+          <div class="control-group">
+            <div class="control-group-header">
+              <label>Filter Env</label>
+              <span class="param-val" id="val-env-filter">0.0 oct</span>
+            </div>
+            <input type="range" id="env-filter" min="-4" max="4" step="0.1" value="0" oninput="updateSynthParams()" />
+          </div>
+        </div>
       </div>
 
         <!-- ======================================================== -->
@@ -1517,6 +1616,65 @@
           delayTime: 0.35,
           volume: 0.9,
         },
+
+        // --- One-shot SFX shapes (demonstrate the envelope engine) ---
+        {
+          id: 'sfx-laser-zap',
+          name: 'Laser Zap',
+          category: 'SFX',
+          waveform: 'sawtooth',
+          glide: 0.0,
+          filterCutoff: 900,
+          vibratoDepth: 0,
+          vibratoRate: 5.5,
+          delayFeedback: 0.25,
+          delayTime: 0.09,
+          volume: 0.8,
+          envMode: 'oneshot',
+          envAttack: 0.002,
+          envDecay: 0.14,
+          envSustain: 0,
+          envRelease: 0.05,
+          envFilter: 3.5,
+        },
+        {
+          id: 'sfx-ui-blip',
+          name: 'UI Blip',
+          category: 'SFX',
+          waveform: 'square',
+          glide: 0.0,
+          filterCutoff: 2600,
+          vibratoDepth: 0,
+          vibratoRate: 5.5,
+          delayFeedback: 0.15,
+          delayTime: 0.12,
+          volume: 0.7,
+          envMode: 'oneshot',
+          envAttack: 0.001,
+          envDecay: 0.06,
+          envSustain: 0,
+          envRelease: 0.03,
+          envFilter: 1.2,
+        },
+        {
+          id: 'sfx-airlock-swell',
+          name: 'Airlock Swell',
+          category: 'SFX',
+          waveform: 'sawtooth',
+          glide: 0.5,
+          filterCutoff: 320,
+          vibratoDepth: 4,
+          vibratoRate: 0.8,
+          delayFeedback: 0.55,
+          delayTime: 0.6,
+          volume: 0.8,
+          envMode: 'sustain',
+          envAttack: 1.4,
+          envDecay: 1.2,
+          envSustain: 0.55,
+          envRelease: 2.5,
+          envFilter: 2.6,
+        },
       ];
 
       let userPresets = [];
@@ -1600,6 +1758,15 @@
         document.getElementById('delay-time').value = preset.delayTime !== undefined ? preset.delayTime : 0.35;
         document.getElementById('volume').value = preset.volume !== undefined ? preset.volume : 0.8;
 
+        // Envelope — presets saved before envelopes existed default to a
+        // full-sustain shape, which reproduces the original behaviour.
+        document.getElementById('env-mode').value = preset.envMode || 'sustain';
+        document.getElementById('env-attack').value = preset.envAttack !== undefined ? preset.envAttack : 0.04;
+        document.getElementById('env-decay').value = preset.envDecay !== undefined ? preset.envDecay : 0.2;
+        document.getElementById('env-sustain').value = preset.envSustain !== undefined ? preset.envSustain : 1;
+        document.getElementById('env-release').value = preset.envRelease !== undefined ? preset.envRelease : 0.12;
+        document.getElementById('env-filter').value = preset.envFilter !== undefined ? preset.envFilter : 0;
+
         updateSynthParams();
         renderPresetOptions();
         document.getElementById('status-bar').innerText = `Loaded Preset: ${preset.name}`;
@@ -1630,6 +1797,12 @@
           delayFeedback: parseFloat(document.getElementById('delay-feedback').value),
           delayTime: parseFloat(document.getElementById('delay-time').value),
           volume: parseFloat(document.getElementById('volume').value),
+          envMode: document.getElementById('env-mode').value,
+          envAttack: parseFloat(document.getElementById('env-attack').value),
+          envDecay: parseFloat(document.getElementById('env-decay').value),
+          envSustain: parseFloat(document.getElementById('env-sustain').value),
+          envRelease: parseFloat(document.getElementById('env-release').value),
+          envFilter: parseFloat(document.getElementById('env-filter').value),
         };
 
         userPresets.push(newPreset);
@@ -1674,7 +1847,7 @@
       // 2. AUDIO SYNTHESIZER & EFFECTS GRAPH
       // ========================================================
       let ctx;
-      let osc, oscGain, filterNode;
+      let osc, oscGain, envGain, filterNode;
       let vibratoOsc, vibratoGain;
       let delayNode, feedbackNode, delayFilterNode;
       let masterGain, analyser;
@@ -1708,6 +1881,7 @@
         // Core Nodes
         osc = ctx.createOscillator();
         oscGain = ctx.createGain();
+        envGain = ctx.createGain();
         filterNode = ctx.createBiquadFilter();
         masterGain = ctx.createGain();
 
@@ -1732,10 +1906,12 @@
         analyser.fftSize = 256;
 
         // Signal Chain:
-        // osc -> oscGain -> filterNode -> (Dry + Wet) -> Looper Bus & Master -> Analyser -> Destination
+        // osc -> oscGain (performance level) -> envGain (ADSR) -> filterNode
+        //     -> (Dry + Wet) -> Looper Bus & Master -> Analyser -> Destination
         filterNode.type = 'lowpass';
         osc.connect(oscGain);
-        oscGain.connect(filterNode);
+        oscGain.connect(envGain);
+        envGain.connect(filterNode);
 
         // Dry Path
         filterNode.connect(masterGain);
@@ -1754,7 +1930,8 @@
         // Initial settings
         osc.type = document.getElementById('waveform').value;
         osc.frequency.value = 440;
-        oscGain.gain.value = 0; // silent until touch/press
+        oscGain.gain.value = 1; // performance level; the envelope does the gating
+        envGain.gain.value = MIN_GAIN; // silent until touch/press
         masterGain.gain.value = parseFloat(document.getElementById('volume').value);
         osc.start();
 
@@ -1767,6 +1944,107 @@
         loadUserPresetsFromStorage();
         renderPresetOptions();
         loadSelectedPreset('clara-rockmore');
+      }
+
+      /* ========================================================
+         ADSR ENVELOPES (amplitude + filter)
+
+         envGain sits between the performance gain (theremin Y axis /
+         key velocity) and the filter, so the envelope multiplies the
+         played level rather than replacing it.
+
+         Sustained mode  : A -> D -> S while held -> R on release.
+         One-Shot mode   : A -> D to silence, hold and release ignored.
+                           This is what stingers, zaps and UI blips need.
+         ======================================================== */
+      const MIN_GAIN = 0.0001;
+
+      function envParams() {
+        return {
+          mode: document.getElementById('env-mode').value,
+          attack: parseFloat(document.getElementById('env-attack').value),
+          decay: parseFloat(document.getElementById('env-decay').value),
+          sustain: parseFloat(document.getElementById('env-sustain').value),
+          release: parseFloat(document.getElementById('env-release').value),
+          filterOct: parseFloat(document.getElementById('env-filter').value),
+        };
+      }
+
+      // Freeze a param at its current value so a new ramp starts from there
+      // instead of jumping. cancelAndHoldAtTime is missing in some browsers.
+      function cancelAndHold(param, when) {
+        if (param.cancelAndHoldAtTime) {
+          param.cancelAndHoldAtTime(when);
+        } else {
+          const v = param.value;
+          param.cancelScheduledValues(when);
+          param.setValueAtTime(v, when);
+        }
+      }
+
+      function clampHz(hz) {
+        return Math.min(20000, Math.max(20, hz));
+      }
+
+      function baseCutoff() {
+        return parseFloat(document.getElementById('filter-cutoff').value);
+      }
+
+      // Cutoff the filter envelope settles on while a note is held
+      function sustainCutoff(e) {
+        const oct = e.mode === 'oneshot' ? 0 : e.filterOct * e.sustain;
+        return clampHz(baseCutoff() * Math.pow(2, oct));
+      }
+
+      function gateOn() {
+        if (!ctx) return;
+        const e = envParams();
+        const now = ctx.currentTime;
+        const attack = Math.max(e.attack, 0.001);
+        const decayTc = Math.max(e.decay, 0.002) / 3; // ~95% of the way in `decay`
+
+        const g = envGain.gain;
+        cancelAndHold(g, now);
+        g.linearRampToValueAtTime(1.0, now + attack);
+        g.setTargetAtTime(
+          e.mode === 'oneshot' ? MIN_GAIN : Math.max(e.sustain, MIN_GAIN),
+          now + attack,
+          decayTc
+        );
+
+        if (e.filterOct) {
+          const f = filterNode.frequency;
+          cancelAndHold(f, now);
+          f.linearRampToValueAtTime(clampHz(baseCutoff() * Math.pow(2, e.filterOct)), now + attack);
+          f.setTargetAtTime(sustainCutoff(e), now + attack, decayTc);
+        }
+      }
+
+      function gateOff() {
+        if (!ctx) return;
+        const e = envParams();
+        if (e.mode === 'oneshot') return; // one-shots ring out on their own
+        const now = ctx.currentTime;
+        const releaseTc = Math.max(e.release, 0.002) / 3;
+
+        cancelAndHold(envGain.gain, now);
+        envGain.gain.setTargetAtTime(MIN_GAIN, now, releaseTc);
+
+        if (e.filterOct) {
+          cancelAndHold(filterNode.frequency, now);
+          filterNode.frequency.setTargetAtTime(baseCutoff(), now, releaseTc);
+        }
+      }
+
+      // Hard stop regardless of mode (tab switch, Stop MIDI)
+      function silenceVoice(fade = 0.02) {
+        if (!ctx) return;
+        isPlaying = false;
+        const now = ctx.currentTime;
+        cancelAndHold(envGain.gain, now);
+        envGain.gain.setTargetAtTime(MIN_GAIN, now, fade);
+        cancelAndHold(filterNode.frequency, now);
+        filterNode.frequency.setTargetAtTime(baseCutoff(), now, 0.05);
       }
 
       function updateSynthParams() {
@@ -1789,14 +2067,31 @@
         document.getElementById('val-delay-time').innerText = `${Math.round(delayTime * 1000)}ms`;
         document.getElementById('val-volume').innerText = `${Math.round(volume * 100)}%`;
 
+        // Envelope readouts
+        const e = envParams();
+        document.getElementById('val-attack').innerText = fmtTime(e.attack);
+        document.getElementById('val-decay').innerText = fmtTime(e.decay);
+        document.getElementById('val-sustain').innerText = `${Math.round(e.sustain * 100)}%`;
+        document.getElementById('val-release').innerText = fmtTime(e.release);
+        document.getElementById('val-env-filter').innerText = `${e.filterOct > 0 ? '+' : ''}${e.filterOct.toFixed(1)} oct`;
+
         // Update Web Audio Parameters
         osc.type = wave;
-        filterNode.frequency.setTargetAtTime(filterCutoff, ctx.currentTime, 0.05);
+        // Don't stomp on a filter envelope that is mid-flight
+        if (isPlaying && e.filterOct) {
+          filterNode.frequency.setTargetAtTime(sustainCutoff(e), ctx.currentTime, 0.05);
+        } else {
+          filterNode.frequency.setTargetAtTime(filterCutoff, ctx.currentTime, 0.05);
+        }
         vibratoOsc.frequency.setTargetAtTime(vibRate, ctx.currentTime, 0.05);
         vibratoGain.gain.setTargetAtTime(vibDepth, ctx.currentTime, 0.05);
         delayNode.delayTime.setTargetAtTime(delayTime, ctx.currentTime, 0.05);
         feedbackNode.gain.setTargetAtTime(delayFeedback, ctx.currentTime, 0.05);
         masterGain.gain.setTargetAtTime(volume, ctx.currentTime, 0.05);
+      }
+
+      function fmtTime(sec) {
+        return sec >= 1 ? `${sec.toFixed(2)}s` : `${Math.round(sec * 1000)}ms`;
       }
 
       const MIN_FREQ = 65.41; // C2
@@ -1826,7 +2121,8 @@
         currentFreq = freq;
         const glideTime = parseFloat(document.getElementById('glide').value);
         osc.frequency.setTargetAtTime(freq, ctx.currentTime, glideTime);
-        oscGain.gain.setTargetAtTime(1.0, ctx.currentTime, 0.03);
+        oscGain.gain.setTargetAtTime(1.0, ctx.currentTime, 0.005);
+        gateOn();
 
         const info = freqToNoteInfo(freq);
         document.getElementById('hud-note').innerText = info.note;
@@ -1836,7 +2132,7 @@
       function triggerNoteOff() {
         if (!ctx) return;
         isPlaying = false;
-        oscGain.gain.setTargetAtTime(0, ctx.currentTime, 0.08);
+        gateOff();
       }
 
       // Realtime Scope Visualizer
@@ -2605,7 +2901,8 @@
           e.preventDefault();
           isPlaying = true;
           indicator.style.opacity = '1';
-          handlePadMove(e);
+          handlePadMove(e); // sets pitch + performance level first
+          gateOn();
         };
 
         const stopPad = (e) => {
@@ -2709,7 +3006,7 @@
         } else if (type === 'midi') {
           document.getElementById('midi-pad').style.display = 'flex';
         }
-        triggerNoteOff();
+        silenceVoice();
       }
 
       // MIDI Player Integration
@@ -2751,7 +3048,7 @@
 
       function stopMidi() {
         if (midiPlayer) midiPlayer.stop();
-        triggerNoteOff();
+        silenceVoice(0.05);
         document.getElementById('status-bar').innerText = 'MIDI Playback Stopped';
         document.getElementById('play-midi').disabled = false;
         document.getElementById('stop-midi').disabled = true;
